@@ -1,6 +1,8 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+TOKEN = $(shell grep  -Po "token: (.*)" config.yml | cut -d: -f2  | xargs) # b3lb load balancer specific
+
 
 #help: @ list available tasks on this project
 help:

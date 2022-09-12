@@ -2,6 +2,7 @@
 SHELL := /bin/bash
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 TOKEN = $(shell grep  -Po "token: (.*)" config.yml | cut -d: -f2  | xargs) # b3lb load balancer specific
+SECRET = $(shell docker exec bbb1 sh -c "bbb-conf --secret" | grep -Po "Secret: (.*)" | cut -d: -f2 | xargs)
 
 
 #help: @ list available tasks on this project

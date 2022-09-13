@@ -25,7 +25,7 @@ cluster.start:
 #cluster.stop: @ stop development cluster
 cluster.stop:
 	@echo "[CLUSTER] stop development cluster"
-	@docker stop bbb1 bbb2 influxdb redis
+	@docker stop bbb1 bbb2 influxdb redis nconfig b3lb
 
 #cluster.influxdb: @ initialize influxdb database
 cluster.influxdb:

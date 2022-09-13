@@ -47,3 +47,7 @@ cluster.grafana:
 #cluster.consul: @ start development cluster using consul coniguration provider
 cluster.consul:
 	@docker-compose -f "$(ROOT_DIR)/docker-compose.yml" -f "$(ROOT_DIR)/docker-compose.consul.yml" up -d
+
+#cluster.b3lb: @ start development cluster using b3lb image
+cluster.b3lb:
+	@docker-compose -f "$(ROOT_DIR)/docker-compose.yml" -f "$(ROOT_DIR)/docker-compose.consul.yml" -f "$(ROOT_DIR)/docker-compose.b3lb.yml" up -d

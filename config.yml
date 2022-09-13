@@ -1,0 +1,21 @@
+---
+bigbluebutton:
+  secret: 0ol5t44UR21rrP0xL5ou7IBFumWF3GENebgW1RyTfbU
+  recordingsPollInterval: 1m
+balancer:
+  metricsRange: -5m
+  cpuLimit: 99
+  memLimit: 99
+admin:
+  apiKey: kgpqrTipM2yjcXwz5pOxBKViE9oNX76R
+port: 8090
+redis:
+  address: redis:6379
+  password:
+  database: 0
+influxdb:
+  address: http://influxdb:8086
+  token: Zq9wLsmhnW5UtOiPJApUv1cTVJfwXsTgl_pCkiTikQ3g2YGPtS5HqsXef-Wf5pUU3wjY3nVWTYRI-Wc8LjbDfg==
+  organization: b3lb
+  bucket: bucket
+...

@@ -25,7 +25,11 @@ cluster.start:
 #cluster.stop: @ stop development cluster
 cluster.stop:
 	@echo "[CLUSTER] stop development cluster"
-	@docker stop bbb1 bbb2 influxdb redis nconfig b3lb
+	@docker stop bbb1 bbb2 influxdb redis
+	@if [ "$( docker container inspect -f '{{.State.Running}}' consul )" == "true" ]; then docker stop nconfig; fi;
+	@if [ "$( docker container inspect -f '{{.State.Running}}' nconfig )" == "true" ]; then docker stop nconfig; fi;
+	@if [ "$( docker container inspect -f '{{.State.Running}}' b3lb )" == "true" ]; then docker stop nconfig; fi;
+
 
 #cluster.influxdb: @ initialize influxdb database
 cluster.influxdb:

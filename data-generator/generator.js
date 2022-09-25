@@ -27,7 +27,6 @@ const args = yargs(hideBin(process.argv))
     .alias('help', 'h').argv;
 
 const influxdb = new InfluxDB({ url: args.host, token: args.token })
-const writeApi = influxdb.getWriteApi(args.org, args.bucket)
 
 const points = [
     {
@@ -67,10 +66,14 @@ function randomIntFromInterval(min, max) { // min and max included
 }
 
 setInterval(() => {
+    const writeApi = influxdb.getWriteApi(args.org, args.bucket)
+
     points.forEach(p => {
         let _p = new Point(p.measurement)
             .intField(p.field, randomIntFromInterval(p.min, p.max))
         writeApi.writePoint(_p)
         console.log(_p.toString())
     })
+
+    writeApi.close()
 }, 10000)

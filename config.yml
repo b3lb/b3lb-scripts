@@ -21,3 +21,4 @@ influxdb:
 monitoring:
   auth: password
   port: 8091
+  aggregation_interval: 10s

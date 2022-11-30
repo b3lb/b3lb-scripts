@@ -12,7 +12,7 @@ sha1() {
 usage() {
   echo "
     Usage: api.sh [OPTION]
-    Call b3lb api functions
+    Call bigblueswarm api functions
     -c, --create         Call create api. It prompts for the room name parameter. Meeting identifier, attendee password and moderator password are generated automatically.
     -j, --join           Call join api. It prompts for the meeting ID parameter, the full name and the password.
   "

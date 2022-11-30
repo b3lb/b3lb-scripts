@@ -1,8 +1,8 @@
 version: '3.8'
 services:
-  b3lb:
-    container_name: b3lb
-    image: sledunois/b3lb:v2.1.1
+  bigblueswarm:
+    container_name: bigblueswarm
+    image: sledunois/bigblueswarm:v2.1.1
     links:
       - redis
       - bbb1

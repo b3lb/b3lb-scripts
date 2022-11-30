@@ -5,7 +5,7 @@ API_KEY=$(grep  -Po "apiKey: (.*)" $(dirname "$0")/../config.yml | cut -d: -f2 |
 usage() {
   echo "
     Usage: admin.sh [OPTION]
-    Call b3lb admin functions
+    Call bigblueswarm admin functions
     -l, --list           Call admin list api. It displays instance list.
     -c, --create         Call admin create api. It prompts to ask the instance url and instance secret to create.
     -d, --delete         Call admin delete api. It prompts to ask the instance url to delete.

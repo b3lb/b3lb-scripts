@@ -20,7 +20,7 @@ const args = yargs(hideBin(process.argv))
     })
     .option('org', {
         description: 'Influxdb organization',
-        default: 'b3lb',
+        default: 'bigblueswarm',
         type: 'string'
     })
     .help()

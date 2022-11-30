@@ -1,10 +1,10 @@
-# b3lb-scripts
+# bbs-scripts
 
 This repository is used by projects to build, manage et run a development cluster.
 
 Available commands: 
 ```shell
-@SLedunois ➜ /workspaces/b3lb-scripts (main ✗) $ make help
+@SLedunois ➜ /workspaces/bigblueswarm-scripts (main ✗) $ make help
 help                           list available tasks on this project
 build.image                    build custom bigbluebutton docker image
 cluster.init                   initialize development cluster (initialize influxdb and telegraf)

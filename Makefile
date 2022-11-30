@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-TOKEN = $(shell grep  -Po "token: (.*)" config.yml | cut -d: -f2  | xargs) # b3lb load balancer specific
+TOKEN = $(shell grep  -Po "token: (.*)" config.yml | cut -d: -f2  | xargs) # bigblueswarm load balancer specific
 SECRET = $(shell docker exec bbb1 sh -c "bbb-conf --secret" | grep -Po "Secret: (.*)" | cut -d: -f2 | xargs)
 
 
@@ -28,20 +28,20 @@ cluster.stop:
 	@docker stop bbb1 bbb2 influxdb redis
 	@if [ "$( docker container inspect -f '{{.State.Running}}' consul )" == "true" ]; then docker stop nconfig; fi;
 	@if [ "$( docker container inspect -f '{{.State.Running}}' nconfig )" == "true" ]; then docker stop nconfig; fi;
-	@if [ "$( docker container inspect -f '{{.State.Running}}' b3lb )" == "true" ]; then docker stop nconfig; fi;
+	@if [ "$( docker container inspect -f '{{.State.Running}}' bigblueswarm )" == "true" ]; then docker stop nconfig; fi;
 
 
 #cluster.influxdb: @ initialize influxdb database
 cluster.influxdb:
 	@echo "[CLUSTER] initialize development cluster"
 	@echo "[CLUSTER] setting up InfluxDB token"
-	@docker exec influxdb sh -c "influx setup --name b3lbconfig --org b3lb --username admin --password password --token ${TOKEN} --bucket bucket --retention 0 --force"
+	@docker exec influxdb sh -c "influx setup --name bigblueswarmconfig --org bigblueswarm --username admin --password password --token ${TOKEN} --bucket bucket --retention 0 --force"
 
 #cluster.telegraf: @ initialize bigbluebutton telegraf configuration
 cluster.telegraf:
 	@echo "[CLUSTER] initialize bigbluebutton telegraf configuration"
-	@docker exec bbb1 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nB3LB_HOST=http://localhost/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
-	@docker exec bbb2 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nB3LB_HOST=http://localhost:8080/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
+	@docker exec bbb1 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nBIGBLUESWARM_HOST=http://localhost/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
+	@docker exec bbb2 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nBIGBLUESWARM_HOST=http://localhost:8080/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
 
 #cluster.grafana: @ launch cluster with grafana
 cluster.grafana:
@@ -52,6 +52,6 @@ cluster.grafana:
 cluster.consul:
 	@docker-compose -f "$(ROOT_DIR)/docker-compose.yml" -f "$(ROOT_DIR)/docker-compose.consul.yml" up -d
 
-#cluster.b3lb: @ start development cluster using b3lb image
-cluster.b3lb:
-	@docker-compose -f "$(ROOT_DIR)/docker-compose.yml" -f "$(ROOT_DIR)/docker-compose.consul.yml" -f "$(ROOT_DIR)/docker-compose.b3lb.yml" up -d
+#cluster.bigblueswarm: @ start development cluster using bigblueswarm image
+cluster.bigblueswarm:
+	@docker-compose -f "$(ROOT_DIR)/docker-compose.yml" -f "$(ROOT_DIR)/docker-compose.consul.yml" -f "$(ROOT_DIR)/docker-compose.bigblueswarm.yml" up -d

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   bigblueswarm:
     container_name: bigblueswarm
-    image: sledunois/bigblueswarm:v2.1.1
+    image: sledunois/bigblueswarm:latest
     links:
       - redis
       - bbb1

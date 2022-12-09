@@ -23,10 +23,17 @@ const args = yargs(hideBin(process.argv))
         default: 'bigblueswarm',
         type: 'string'
     })
+    .option('interval', {
+        description: 'Aggregation interval in ms',
+        default: 10000,
+        type: 'number'
+    })
     .help()
     .alias('help', 'h').argv;
 
 const influxdb = new InfluxDB({ url: args.host, token: args.token })
+
+const tenants = ["tenant1.localhost.com", "tenant2.localhost.com"]
 
 const points = [
     {
@@ -75,5 +82,14 @@ setInterval(() => {
         console.log(_p.toString())
     })
 
+    tenants.forEach(t => {
+        points.forEach(p => {
+            let _p = new Point(`${t}:${p.measurement}`)
+                .intField(p.field, randomIntFromInterval(p.min, p.max))
+            writeApi.writePoint(_p)
+            console.log(_p.toString())
+        })
+    })
+
     writeApi.close()
-}, 10000)
+}, args.interval)

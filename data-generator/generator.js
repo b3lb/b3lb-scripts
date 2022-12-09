@@ -38,33 +38,33 @@ const tenants = ["tenant1.localhost.com", "tenant2.localhost.com"]
 const points = [
     {
         measurement: 'bigbluebutton_meetings',
-        field: 'active_meetings',
-        min: 200,
-        max: 250
-    },
-    {
-        measurement: 'bigbluebutton_meetings',
-        field: 'active_recordings',
-        min: 200,
-        max: 250
-    },
-    {
-        measurement: 'bigbluebutton_meetings',
-        field: 'participant_count',
-        min: 5000,
-        max: 7500
-    },
-    {
-        measurement: 'bigbluebutton_meetings',
-        field: 'listener_count',
-        min: 5000,
-        max: 7500
-    },
-    {
-        measurement: 'bigbluebutton_meetings',
-        field: 'video_count',
-        min: 500,
-        max: 750
+        fields: [
+            {
+                field: 'active_meetings',
+                min: 200,
+                max: 250
+            },
+            {
+                field: 'active_recordings',
+                min: 200,
+                max: 250
+            },
+            {
+                field: 'participant_count',
+                min: 5000,
+                max: 7500
+            },
+            {
+                field: 'listener_count',
+                min: 5000,
+                max: 7500
+            },
+            {
+                field: 'video_count',
+                min: 500,
+                max: 750
+            }
+        ]
     }
 ]
 
@@ -72,22 +72,27 @@ function randomIntFromInterval(min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+function getPoint(measurement, fields) {
+    let point = new Point(measurement)
+    fields.forEach(f => point.intField(f.field, randomIntFromInterval(f.min, f.max)))
+
+    return point
+}
+
 setInterval(() => {
     const writeApi = influxdb.getWriteApi(args.org, args.bucket)
 
     points.forEach(p => {
-        let _p = new Point(p.measurement)
-            .intField(p.field, randomIntFromInterval(p.min, p.max))
-        writeApi.writePoint(_p)
-        console.log(_p.toString())
+        let point = getPoint(p.measurement, p.fields)
+        writeApi.writePoint(point)
+        console.log(point.toString())
     })
 
     tenants.forEach(t => {
         points.forEach(p => {
-            let _p = new Point(`${t}:${p.measurement}`)
-                .intField(p.field, randomIntFromInterval(p.min, p.max))
-            writeApi.writePoint(_p)
-            console.log(_p.toString())
+            let point = getPoint(`${t}:${p.measurement}`, p.fields)
+            writeApi.writePoint(point)
+            console.log(point.toString())
         })
     })
 

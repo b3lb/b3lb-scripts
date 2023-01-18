@@ -11,7 +11,7 @@ RUN go version
 # build bbb telegraf plugin
 RUN mkdir -p $GOPATH
 WORKDIR $GOPATH
-RUN git clone https://github.com/SLedunois/bigbluebutton-telegraf-plugin
+RUN git clone https://github.com/bigblueswarm/bigbluebutton-telegraf-plugin
 WORKDIR $GOPATH/bigbluebutton-telegraf-plugin
 RUN go build -o pkg/bbb-telegraf ./cmd/main.go
 

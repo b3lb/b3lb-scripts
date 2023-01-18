@@ -37,10 +37,10 @@ const tenants = ["tenant1.localhost.com", "tenant2.localhost.com"]
 
 const points = [
     {
-        measurement: 'bigbluebutton_meetings',
+        measurement: 'bigbluebutton',
         fields: [
             {
-                field: 'active_meetings',
+                field: 'meetings',
                 min: 200,
                 max: 250
             },
@@ -50,19 +50,39 @@ const points = [
                 max: 250
             },
             {
-                field: 'participant_count',
+                field: 'participants',
                 min: 5000,
                 max: 7500
             },
             {
-                field: 'listener_count',
+                field: 'listener_participants',
                 min: 5000,
                 max: 7500
             },
             {
-                field: 'video_count',
+                field: 'video_participants',
                 min: 500,
                 max: 750
+            },
+            {
+                field: 'voice_participants',
+                min: 5000,
+                max: 7500
+            },
+            {
+                field: 'recordings',
+                min: 10,
+                max: 50
+            },
+            {
+                field: 'published_recordings',
+                min: 10,
+                max: 50
+            },
+            {
+                field: 'online',
+                min: 1,
+                max: 1
             }
         ]
     }
@@ -90,7 +110,7 @@ setInterval(() => {
 
     tenants.forEach(t => {
         points.forEach(p => {
-            let point = getPoint(`${t}:${p.measurement}`, p.fields)
+            let point = getPoint(`${p.measurement}:${t}`, p.fields)
             writeApi.writePoint(point)
             console.log(point.toString())
         })

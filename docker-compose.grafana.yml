@@ -9,4 +9,4 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_SECURITY_ADMIN_USER=admin
     links:
-      - influxdb
+      - timescale

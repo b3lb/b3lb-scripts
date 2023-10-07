@@ -7,11 +7,11 @@ Available commands:
 @SLedunois ➜ /workspaces/bigblueswarm-scripts (main ✗) $ make help
 help                           list available tasks on this project
 build.image                    build custom bigbluebutton docker image
-cluster.init                   initialize development cluster (initialize influxdb and telegraf)
+cluster.init                   initialize telegraf development configuration
 cluster.start                  start development cluster
 cluster.stop                   stop development cluster
-cluster.influxdb               initialize influxdb database
 cluster.telegraf               initialize bigbluebutton telegraf configuration
 cluster.grafana                launch cluster with grafana
 cluster.consul                 start development cluster using consul coniguration provider
+cluster.bigblueswarm           start development cluster using bigblueswarm image
 ```

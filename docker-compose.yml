@@ -4,37 +4,24 @@ services:
     container_name: bbb1
     image: sledunois/bbb-dev:2.4-develop
     privileged: true
-    environment:
-      - INFLUX_TOKEN=Zq9wLsmhnW5UtOiPJApUv1cTVJfwXsTgl_pCkiTikQ3g2YGPtS5HqsXef-Wf5pUU3wjY3nVWTYRI-Wc8LjbDfg==
     ports:
       - "8081:80"
     links:
-      - influxdb
+      - timescale
   bbb2:
     container_name: bbb2
     image: sledunois/bbb-dev:2.4-develop
     privileged: true
-    environment:
-      - INFLUX_TOKEN=Zq9wLsmhnW5UtOiPJApUv1cTVJfwXsTgl_pCkiTikQ3g2YGPtS5HqsXef-Wf5pUU3wjY3nVWTYRI-Wc8LjbDfg==
     ports:
       - "8080:80"
     links:
-      - influxdb
-  influxdb:
-    container_name: influxdb
-    image: influxdb:2.0
+      - timescale
+  timescale:
+    container_name: timescale
+    image: timescale/timescaledb:latest-pg15
     environment:
-      - DOCKER_INFLUXDB_INIT_USERNAME=bigblueswarm
-      - DOCKER_INFLUXDB_INIT_PASSWORD=password
-      - DOCKER_INFLUXDB_INIT_ORG=bigblueswarm
-      - DOCKER_INFLUXDB_INIT_BUCKET=bucket
+      - POSTGRES_USER=bigblueswarm
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=bigblueswarm
     ports:
-      - "8086:8086"
-  redis:
-    container_name: redis
-    image: redis:6.2-alpine
-    command: [ "redis-server", "--appendonly", "yes" ]
-    ports:
-      - "6379:6379"
-    environment:
-      - REDIS_PASSWORD=password
+      - "5432:5432"

@@ -14,8 +14,8 @@ build.image:
 	@echo "[BUILD.IMAGE] build custom bigbluebutton docker image"
 	DOCKER_BUILDKIT=0 docker build "$(ROOT_DIR)/docker" -t sledunois/bbb-dev:2.4-develop
 
-#cluster.init: @ initialize development cluster (initialize influxdb and telegraf)
-cluster.init: cluster.influxdb cluster.telegraf
+#cluster.init: @ initialize telegraf development configuration
+cluster.init: cluster.telegraf
 
 #cluster.start: @ start development cluster
 cluster.start:
@@ -25,23 +25,16 @@ cluster.start:
 #cluster.stop: @ stop development cluster
 cluster.stop:
 	@echo "[CLUSTER] stop development cluster"
-	@docker stop bbb1 bbb2 influxdb redis
+	@docker stop bbb1 bbb2
 	@if [ "$( docker container inspect -f '{{.State.Running}}' consul )" == "true" ]; then docker stop nconfig; fi;
 	@if [ "$( docker container inspect -f '{{.State.Running}}' nconfig )" == "true" ]; then docker stop nconfig; fi;
 	@if [ "$( docker container inspect -f '{{.State.Running}}' bigblueswarm )" == "true" ]; then docker stop nconfig; fi;
 
-
-#cluster.influxdb: @ initialize influxdb database
-cluster.influxdb:
-	@echo "[CLUSTER] initialize development cluster"
-	@echo "[CLUSTER] setting up InfluxDB token"
-	@docker exec influxdb sh -c "influx setup --name bigblueswarmconfig --org bigblueswarm --username admin --password password --token ${TOKEN} --bucket bucket --retention 0 --force"
-
 #cluster.telegraf: @ initialize bigbluebutton telegraf configuration
 cluster.telegraf:
 	@echo "[CLUSTER] initialize bigbluebutton telegraf configuration"
-	@docker exec bbb1 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nBIGBLUESWARM_HOST=http://localhost/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
-	@docker exec bbb2 sh -c "echo 'INFLUXDB_TOKEN=${TOKEN}\nBIGBLUESWARM_HOST=http://localhost:8080/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
+	@docker exec bbb1 sh -c "echo 'BIGBLUESWARM_HOST=http://localhost/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
+	@docker exec bbb2 sh -c "echo 'BIGBLUESWARM_HOST=http://localhost:8080/bigbluebutton\nBBB_SECRET=${SECRET}' > /etc/default/telegraf && . /etc/default/telegraf && systemctl restart telegraf"
 
 #cluster.grafana: @ launch cluster with grafana
 cluster.grafana:

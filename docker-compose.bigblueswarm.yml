@@ -4,10 +4,8 @@ services:
     container_name: bigblueswarm
     image: sledunois/bigblueswarm:latest
     links:
-      - redis
       - bbb1
       - bbb2
-      - influxdb
       - nconfig
     ports:
       - "8090:8090"

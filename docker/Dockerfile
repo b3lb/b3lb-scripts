@@ -2,10 +2,11 @@ FROM ubuntu:bionic AS builder
 WORKDIR /tmp
 # Go installation
 ENV GOPATH $HOME/go
+ENV GOVERSION 1.21.3
 ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin
 RUN apt update && apt install -y curl git
-RUN curl -OL https://golang.org/dl/go1.17.6.linux-amd64.tar.gz
-RUN tar -C /usr/local -xvf go1.17.6.linux-amd64.tar.gz
+RUN curl -OL "https://golang.org/dl/go${GOVERSION}.linux-amd64.tar.gz"
+RUN tar -C /usr/local -xvf "go${GOVERSION}.linux-amd64.tar.gz"
 RUN go version
 
 # build bbb telegraf plugin

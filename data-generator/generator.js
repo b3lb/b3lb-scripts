@@ -1,25 +1,28 @@
-import { InfluxDB, Point } from '@influxdata/influxdb-client'
+import postgres from 'pg';
+const { Client } = postgres;
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 
+import DB from './db.js';
+
 const args = yargs(hideBin(process.argv))
     .option('host', {
-        description: 'InfluxDB host',
-        default: 'http://localhost:8086',
+        description: 'Timescale host',
+        default: 'localhost',
         type: 'string'
     })
-    .option('token', {
-        description: 'Influxdb API token',
-        default: 'Zq9wLsmhnW5UtOiPJApUv1cTVJfwXsTgl_pCkiTikQ3g2YGPtS5HqsXef-Wf5pUU3wjY3nVWTYRI-Wc8LjbDfg==',
+    .option('user', {
+        description: 'Timescale user',
+        default: 'bigblueswarm',
         type: 'string'
     })
-    .option('bucket', {
-        description: 'Influxdb bucket',
-        default: 'bucket',
+    .option('password', {
+        description: 'Timescale password',
+        default: 'password',
         type: 'string'
     })
-    .option('org', {
-        description: 'Influxdb organization',
+    .option('db', {
+        description: 'Timescale database',
         default: 'bigblueswarm',
         type: 'string'
     })
@@ -31,60 +34,67 @@ const args = yargs(hideBin(process.argv))
     .help()
     .alias('help', 'h').argv;
 
-const influxdb = new InfluxDB({ url: args.host, token: args.token })
+const client = new Client({
+    host: args.host,
+    database: args.db,
+    user: args.user,
+    password: args.password,
+    ssl: false
+});
+
+const db = new DB(client);
+
+await client.connect();
+await db.createBBBMetricTableIfNotExists();
+await db.createBBBMetadataTableIfNotExists();
 
 const tenants = ["tenant1.localhost.com", "tenant2.localhost.com"]
 
-const points = [
+const fields = [
     {
-        measurement: 'bigbluebutton',
-        fields: [
-            {
-                field: 'meetings',
-                min: 200,
-                max: 250
-            },
-            {
-                field: 'active_recordings',
-                min: 200,
-                max: 250
-            },
-            {
-                field: 'participants',
-                min: 5000,
-                max: 7500
-            },
-            {
-                field: 'listener_participants',
-                min: 5000,
-                max: 7500
-            },
-            {
-                field: 'video_participants',
-                min: 500,
-                max: 750
-            },
-            {
-                field: 'voice_participants',
-                min: 5000,
-                max: 7500
-            },
-            {
-                field: 'recordings',
-                min: 10,
-                max: 50
-            },
-            {
-                field: 'published_recordings',
-                min: 10,
-                max: 50
-            },
-            {
-                field: 'online',
-                min: 1,
-                max: 1
-            }
-        ]
+        name: 'meetings',
+        min: 200,
+        max: 250
+    },
+    {
+        name: 'active_recordings',
+        min: 200,
+        max: 250
+    },
+    {
+        name: 'participants',
+        min: 5000,
+        max: 7500
+    },
+    {
+        name: 'listener_participants',
+        min: 5000,
+        max: 7500
+    },
+    {
+        name: 'video_participants',
+        min: 500,
+        max: 750
+    },
+    {
+        name: 'voice_participants',
+        min: 5000,
+        max: 7500
+    },
+    {
+        name: 'recordings',
+        min: 10,
+        max: 50
+    },
+    {
+        name: 'published_recordings',
+        min: 10,
+        max: 50
+    },
+    {
+        name: 'online',
+        min: 1,
+        max: 1
     }
 ]
 
@@ -92,29 +102,13 @@ function randomIntFromInterval(min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function getPoint(measurement, fields) {
-    let point = new Point(measurement)
-    fields.forEach(f => point.intField(f.field, randomIntFromInterval(f.min, f.max)))
-
-    return point
+function getRow() {
+    let row = {}
+    fields.forEach(field => row[field.name] = randomIntFromInterval(field.min, field.max))
+    return row;
 }
 
 setInterval(() => {
-    const writeApi = influxdb.getWriteApi(args.org, args.bucket)
-
-    points.forEach(p => {
-        let point = getPoint(p.measurement, p.fields)
-        writeApi.writePoint(point)
-        console.log(point.toString())
-    })
-
-    tenants.forEach(t => {
-        points.forEach(p => {
-            let point = getPoint(`${p.measurement}:${t}`, p.fields)
-            writeApi.writePoint(point)
-            console.log(point.toString())
-        })
-    })
-
-    writeApi.close()
+    db.insertBBBMetric(getRow())
+    tenants.forEach(t => db.insertMetadataBBBMetric(t, getRow()))
 }, args.interval)

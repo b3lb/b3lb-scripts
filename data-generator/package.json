@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.29.0",
+    "pg": "8.2.x",
     "yargs": "^17.5.1"
   }
 }

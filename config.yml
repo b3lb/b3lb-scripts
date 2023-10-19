@@ -10,6 +10,8 @@ admin:
   apiKey: kgpqrTipM2yjcXwz5pOxBKViE9oNX76R
 port: 8090
 timescale:
+  host: 127.0.0.1
+  port: 5432
   user: bigblueswarm
   password: password
   database: bigblueswarm

@@ -9,10 +9,6 @@ balancer:
 admin:
   apiKey: kgpqrTipM2yjcXwz5pOxBKViE9oNX76R
 port: 8090
-redis:
-  address: redis:6379
-  password:
-  database: 0
 timescale:
   user: bigblueswarm
   password: password
